@@ -181,19 +181,19 @@
   const P = S.predicted, M = S.measured;
   const err = (p, m) => { const v = 100 * (p - m) / m; return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1) + ' %'; };
   const L = P.L_uH * 1e-6;
-  const fOf = (pF) => 1 / (2 * Math.PI * Math.sqrt(L * pF * 1e-12)) / 1000;
+  const fOf = (pF) => 1 / (2 * Math.PI * Math.sqrt(L * (pF + S.stray_pF) * 1e-12)) / 1000;
   const midC = (S.capRange_pF[0] + S.capRange_pF[1]) / 2;
   const fMidPred = fOf(midC);
-  const BW = M.fHigh_kHz - M.fLow_kHz, Q = M.f0_kHz / BW;
+  const BW = M.fHigh_kHz - M.fLow_kHz, Q = M.Q || M.f0_kHz / BW;
   $('statF0').textContent = M.f0_kHz;
   $('statQ').textContent = Q.toFixed(2);
   $('statBand').textContent = Math.round(M.bandLow_kHz) + '–' + Math.round(M.bandHigh_kHz);
   [
-    ['B', 'Inductance L', P.L_uH + ' µH', 'not measured', '—'],
+    ['B', 'Inductance L', P.L_uH + ' µH', '—', '—'],
     ['C', 'C for 819 kHz', P.c819_pF + ' pF', '—', '—'],
     ['B+C', 'Band low end', P.bandLow_kHz + ' kHz', M.bandLow_kHz + ' kHz', err(P.bandLow_kHz, M.bandLow_kHz)],
     ['B+C', 'Band high end', (P.bandHigh_kHz / 1000).toFixed(3) + ' MHz', (M.bandHigh_kHz / 1000).toFixed(3) + ' MHz', err(P.bandHigh_kHz, M.bandHigh_kHz)],
-    ['TP1', 'f₀ at half travel', '≈ ' + fMidPred.toFixed(0) + ' kHz (' + midC + ' pF)', M.f0_kHz + ' kHz', err(fMidPred, M.f0_kHz)],
+    ['TP1', 'f₀ at half travel', '≈ ' + fMidPred.toFixed(0) + ' kHz (' + midC + ' + ' + S.stray_pF + ' pF)', M.f0_kHz + ' kHz', err(fMidPred, M.f0_kHz)],
     ['TP1', 'f_low / f_high at 0.7 × peak', '—', M.fLow_kHz + ' / ' + M.fHigh_kHz + ' kHz', '—'],
     ['TP1', 'Q = f₀ / BW', '—', Q.toFixed(2) + ' (BW ' + BW.toFixed(1) + ' kHz)', '—'],
     ['E', 'Detector RC', P.rc_us + ' µs', S.detector.R_kOhm + ' kΩ × ' + S.detector.C_nF + ' nF', '—']
@@ -204,7 +204,7 @@
   });
 
   /* ---------- tuning calculator ---------- */
-  const lo = 500, hi = 2400;
+  const lo = 300, hi = 2200;
   const pct = (f) => Math.max(0, Math.min(100, (f - lo) / (hi - lo) * 100));
   const cap = $('cap');
   cap.min = S.capRange_pF[0]; cap.max = S.capRange_pF[1];
@@ -224,10 +224,9 @@
 
   /* ---------- detector chart ---------- */
   const chart = $('detChart');
-  const X = (v) => 50 + v / 1400 * 450, Y = (v) => 260 - v / 900 * 240;
-  chart.appendChild(svg('path', { class: 'dim', d: 'M50 200 H 500 M50 140 H 500 M50 80 H 500 M146 20 V 260 M243 20 V 260 M339 20 V 260 M436 20 V 260' }));
+  const X = (v) => 50 + v / 800 * 450, Y = (v) => 260 - v / 32 * 240;
+  chart.appendChild(svg('path', { class: 'dim', d: 'M50 200 H 500 M50 140 H 500 M50 80 H 500 M162.5 20 V 260 M275 20 V 260 M387.5 20 V 260' }));
   chart.appendChild(svg('path', { class: 'w', d: 'M50 20 V 260 H 500' }));
-  chart.appendChild(svg('path', { d: 'M50 260 L 500 20', style: 'stroke: rgba(255,255,255,0.4); stroke-width: 1.2; stroke-dasharray: 2 6; fill: none' }));
   const pts = S.detectorPoints.slice().sort((a, b) => a.tp1 - b.tp1);
   chart.appendChild(svg('path', { class: 'w', d: 'M' + pts.map((p) => X(p.tp1).toFixed(1) + ' ' + Y(p.tp3).toFixed(1)).join(' L ') }));
   const t1 = svg('text', { class: 'lbl', x: 250, y: 292 }); t1.textContent = 'TP1 peak, mV'; chart.appendChild(t1);

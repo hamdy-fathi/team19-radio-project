@@ -7,40 +7,41 @@ window.SITE = {
 
   /* Coil + tank values used by the calculator and the 3D model */
   coil: { turns: 75, diameterMm: 60, windingMm: 29, wireMm: 0.3, loopTurns: 5 },
-  predicted: { L_uH: 249.43, c819_pF: 151.4, bandLow_kHz: 602.24, bandHigh_kHz: 2253, rc_us: 49.5 },
+  predicted: { L_uH: 291.4, c819_pF: 129.5, bandLow_kHz: 557.8, bandHigh_kHz: 2080, rc_us: 49.5 },
   capRange_pF: [20, 280],
-  measured: { bandLow_kHz: 965.5, bandHigh_kHz: 1119, f0_kHz: 1065, fLow_kHz: 956.3, fHigh_kHz: 1194 },
+  stray_pF: 180, /* breadboard, wiring and probe capacitance across the tank */
+  measured: { bandLow_kHz: 393.1, bandHigh_kHz: 600.2, f0_kHz: 504.3, fLow_kHz: 488.1, fHigh_kHz: 538.4, Q: 10.005 },
   detector: { R_kOhm: 15, C_nF: 3.3, diode: '1N60P' },
 
   /* Table 6: source (V), TP1 peak (mV), TP3 DC (mV) */
   detectorPoints: [
-    { source: 0.05, tp1: 44.53, tp3: 11.72 },
-    { source: 0.0996, tp1: 109.4, tp3: 60.55 },
-    { source: 0.203, tp1: 250, tp3: 158.2 },
-    { source: 0.304, tp1: 382.8, tp3: 257.8 },
-    { source: 0.5, tp1: 656.3, tp3: 430.1 },
-    { source: 1.035, tp1: 1348, tp3: 851.9 }
+    { source: 0.05, tp1: 14.45, tp3: 0 },
+    { source: 0.1, tp1: 29.69, tp3: 1.9 },
+    { source: 0.2, tp1: 59.4, tp3: 12.4 },
+    { source: 0.3, tp1: 89.1, tp3: 25.8 },
+    { source: 0.5, tp1: 148.4, tp3: 62.5 },
+    { source: 1, tp1: 296.9, tp3: 168 }
   ],
 
   photos: {
     setup: { src: 'assets/photos/setup.jpg', alt: 'Copper coil on a white PVC pipe between two breadboards, with the tuning capacitor and oscilloscope probes.', cap: 'FIG. 1 · Full bench, coil at centre.' },
-    scope: { src: 'assets/photos/lower-limit.png', alt: 'Oscilloscope screen showing a sine wave, 942.1 kHz and 1.836 V peak to peak.', cap: 'FIG. 2 · 942.1 kHz, 1.836 Vpp near the lower stop.' }
+    scope: { src: 'assets/photos/lower-limit.png', alt: 'Oscilloscope screen showing a sine wave, 942.1 kHz and 1.836 V peak to peak.', cap: 'FIG. 2 · Earlier scope capture, 942.1 kHz, 1.836 Vpp, before the final tank readings.' }
   },
 
   /* Schematic callouts. key = letter shown on the schematic and in 3D. */
   parts: [
     { key: 'A', name: 'Test loop', spec: '5 turns on the same Ø60 mm pipe · driven by the function generator',
       role: 'Stands in for a broadcast station. Its field couples into the 75-turn coil by mutual inductance (M), so the tank can be tested without an antenna.',
-      reading: 'TP1 peak is about 1.2–1.3× the source amplitude above 0.2 V, falling to 0.9× at 50 mV.' },
-    { key: 'B', name: 'Tank coil', spec: '75 T · 0.3 mm enamelled Cu · Ø60 mm · 29 mm winding · L(pred) = 249.43 µH',
+      reading: 'TP1 peak is a steady 0.3× the source amplitude (29.7 mV at 0.1 V, 297 mV at 1 V). The five-turn loop couples only part of the generator signal into the tank.' },
+    { key: 'B', name: 'Tank coil', spec: '75 T · 0.3 mm enamelled Cu · Ø60 mm · 29 mm winding · L = 291.4 µH',
       role: 'With the capacitor, sets the resonant frequency f₀ = 1/(2π√LC). About 14.1 m of wire.',
-      reading: 'L was never measured directly. At half travel the measured 1065 kHz implies either less L or less C than assumed. With 249.43 µH it needs ≈ 89.5 pF.' },
+      reading: 'With 291.4 µH, 150 pF alone would resonate near 760 kHz. The measured f₀ of 504.3 kHz needs ≈ 342 pF in total, so about 180 pF of stray capacitance (breadboard, wiring, probe) sits across the tank.' },
     { key: 'C', name: 'Tuning capacitor', spec: '20–280 pF air-variable · AM section across the coil',
       role: 'Turning the shaft changes C and moves the resonant peak across the band.',
-      reading: 'The measured band of 965.5–1119 kHz means the tank saw only a 1.34 : 1 capacitance change, not 14 : 1. Check the section wiring and the shaft travel.' },
+      reading: 'The measured band of 393.1–600.2 kHz means the tank saw a 2.33 : 1 capacitance change, not 14 : 1. About 180 pF of stray capacitance in parallel squeezes the ratio to (280+180)/(20+180) ≈ 2.3.' },
     { key: 'D', name: 'Detector diode', spec: '1N60P germanium · band toward TP3',
       role: 'Conducts only near positive peaks, charging the RC so that TP3 follows the envelope.',
-      reading: 'Efficiency TP3/TP1 falls from 63–67 % to 26 % at 44.5 mV. The forward drop matters most for weak stations.' },
+      reading: 'Efficiency TP3/TP1 rises from 0 % at 14 mV to 57 % at 297 mV. Below about 30 mV the germanium diode barely conducts, so weak stations are lost.' },
     { key: 'E', name: 'RC load', spec: '15 kΩ ∥ 3.3 nF · τ = 49.5 µs',
       role: 'The capacitor holds each peak; the resistor lets it decay so the output can follow a changing envelope.',
       reading: 'τ is 50× one 1 MHz carrier cycle and 4× shorter than a 5 kHz audio cycle, so it sits in the right window. It also loads the tank, which lowers Q.' }
@@ -60,9 +61,9 @@ window.SITE = {
     { short: 'Generator + test loop', title: 'Add the generator and test loop', photo: 'setup',
       text: 'A five-turn loop wound on the same pipe carries the function generator’s signal into the tank by mutual inductance.',
       note: 'Compensate the probe first. A ×1 probe adds about 100 pF across the tank.' },
-    { short: 'Probe and record', title: 'Probe TP1 and TP3, record', photo: 'scope',
-      text: 'TP1 goes to the scope (×10 probe and ×10 channel), TP3 to the multimeter. f₀ = 1065 kHz at half travel, stops at 965.5 kHz and 1.119 MHz.',
-      note: 'Scope near the lower stop: 942.1 kHz, 1.836 Vpp, about 2.4 % below the recorded 965.5 kHz.' }
+    { short: 'Probe and record', title: 'Probe TP1 and TP3, record', photo: 'setup',
+      text: 'TP1 goes to the scope (×10 probe and ×10 channel), TP3 to the multimeter. f₀ = 504.3 kHz at half travel, stops at 393.1 kHz and 600.2 kHz.',
+      note: 'Tank driven by the test loop. Q = 10.005 from the 488.1 and 538.4 kHz half-power points.' }
   ],
 
   problems: [

@@ -20,7 +20,7 @@
 
   const BW = M.fHigh_kHz - M.fLow_kHz;
   $('hF0').textContent = M.f0_kHz;
-  $('hQ').textContent = (M.f0_kHz / BW).toFixed(2);
+  $('hQ').textContent = (M.Q || M.f0_kHz / BW).toFixed(2);
   $('hTurns').textContent = S.coil.turns + ' T';
   $('hWire').textContent = 'ON Ø' + S.coil.diameterMm + ' MM';
   $('hTau').textContent = P.rc_us;
@@ -92,7 +92,7 @@
   }
 
   /* ---------- tuning dial ---------- */
-  const F0 = 520, F1 = 1620, X0 = 30, X1 = 970, BASE = 100;
+  const F0 = 300, F1 = 2200, X0 = 30, X1 = 970, BASE = 100;
   const x = (f) => X0 + (Math.max(F0, Math.min(F1, f)) - F0) / (F1 - F0) * (X1 - X0);
   const dial = $('dialSvg');
   const ticks = [];
@@ -104,14 +104,12 @@
   dial.appendChild(svg('path', { class: 'tk', d: ticks.filter((_, i) => (F0 + i * 10) % 50).join(' ') }));
   dial.appendChild(svg('path', { class: 'tk m', d: ticks.filter((_, i) => (F0 + i * 10) % 50 === 0 && (F0 + i * 10) % 100).join(' ') }));
   dial.appendChild(svg('path', { class: 'tk M', d: ticks.filter((_, i) => (F0 + i * 10) % 100 === 0).join(' ') }));
-  for (let f = 600; f <= 1600; f += 100) {
-    dial.appendChild(svg('text', { class: 'num' + ((f / 100) % 2 ? ' odd' : ''), x: x(f), y: 134, 'text-anchor': 'middle' }, f));
+  for (let f = 400; f <= 2200; f += 200) {
+    dial.appendChild(svg('text', { class: 'num' + ((f / 200) % 2 ? ' odd' : ''), x: x(f), y: 134, 'text-anchor': 'middle' }, f));
   }
-  /* predicted band runs off the right of the dial (it ends at 2.253 MHz) */
-  const pa = x(P.bandLow_kHz);
-  dial.appendChild(svg('path', { class: 'band-p', d: 'M' + X1 + ' 30 H ' + pa + ' V ' + BASE }));
-  dial.appendChild(svg('path', { class: 'band-p', d: 'M' + (X1 - 10) + ' 24 L ' + X1 + ' 30 L ' + (X1 - 10) + ' 36' }));
-  dial.appendChild(svg('text', { class: 'bl b', x: pa + 8, y: 22 }, 'PREDICTED ' + Math.round(P.bandLow_kHz) + '–' + P.bandHigh_kHz + ' kHz →'));
+  const pa = x(P.bandLow_kHz), pb = x(P.bandHigh_kHz);
+  dial.appendChild(svg('path', { class: 'band-p', d: 'M' + pa + ' ' + BASE + ' V 30 H ' + pb + ' V ' + BASE }));
+  dial.appendChild(svg('text', { class: 'bl b', x: pa + 8, y: 22 }, 'PREDICTED ' + Math.round(P.bandLow_kHz) + '–' + P.bandHigh_kHz + ' kHz'));
   const ma = x(M.bandLow_kHz), mb = x(M.bandHigh_kHz);
   dial.appendChild(svg('rect', { class: 'band-m', x: ma, y: 44, width: mb - ma, height: BASE - 44 }));
   dial.appendChild(svg('text', { class: 'bl y', x: mb + 8, y: 58 }, 'MEASURED · M1'));
@@ -127,9 +125,9 @@
   function tune(f) {
     needle.setAttribute('transform', 'translate(' + x(f).toFixed(1) + ' 0)');
     $('dialF').textContent = Math.round(f);
-    const cpF = 1 / (Math.pow(2 * Math.PI * f * 1e3, 2) * L) * 1e12;
+    const cpF = 1 / (Math.pow(2 * Math.PI * f * 1e3, 2) * L) * 1e12 - S.stray_pF;
     const inRange = cpF >= S.capRange_pF[0] && cpF <= S.capRange_pF[1];
-    $('dialC').textContent = 'needs C ≈ ' + cpF.toFixed(1) + ' pF with L = ' + P.L_uH + ' µH' + (inRange ? '' : ' (outside 20–280 pF)');
+    $('dialC').textContent = 'needs C ≈ ' + cpF.toFixed(1) + ' pF with L = ' + P.L_uH + ' µH + ' + S.stray_pF + ' pF stray' + (inRange ? '' : ' (outside 20–280 pF)');
     const inBand = f >= M.bandLow_kHz && f <= M.bandHigh_kHz;
     const note = $('dialNote');
     note.classList.toggle('in', inBand);

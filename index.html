@@ -137,13 +137,13 @@
       <p class="small muted">Drag the needle. The dashed outline is the band we predicted from L and C; the yellow window is what the bench showed.</p>
     </div>
     <div class="dial frame">
-      <span class="zone" aria-hidden="true">MW · 520–1620 kHz</span>
+      <span class="zone" aria-hidden="true">300–2200 kHz</span>
       <div class="dial-face">
         <svg id="dialSvg" viewBox="0 0 1000 150" aria-hidden="true"></svg>
-        <input type="range" id="dialInput" min="520" max="1620" step="1" value="520" aria-label="Tuning frequency in kilohertz">
+        <input type="range" id="dialInput" min="300" max="2200" step="1" value="300" aria-label="Tuning frequency in kilohertz">
       </div>
       <div class="dial-read">
-        <p class="readout-big mono"><span id="dialF">520</span><small> kHz</small></p>
+        <p class="readout-big mono"><span id="dialF">300</span><small> kHz</small></p>
         <p class="mono small" id="dialC"></p>
         <p class="dial-note" id="dialNote"></p>
       </div>
@@ -198,7 +198,7 @@
       <ol class="notes">
         <li><b class="mono">N1</b><span>The tank resonates at <strong id="nF0"></strong> kHz at half travel, with a 0.7 × peak bandwidth of <strong id="nBW"></strong> kHz.</span></li>
         <li><b class="mono">N2</b><span>The dial only covers <strong id="nBand"></strong> kHz, a <strong id="nRatio"></strong> : 1 capacitance swing instead of 14 : 1. That is the first thing to check before M2.</span></li>
-        <li><b class="mono">N3</b><span>The detector passes 63–67 % of the peak above 0.2 V and only 26 % at 44.5 mV, where the diode drop takes most of it.</span></li>
+        <li><b class="mono">N3</b><span>The detector passes 57 % of the peak at 297 mV but nothing at 14 mV, where the diode drop takes it all.</span></li>
         <li><b class="mono">N4</b><span>τ = <strong id="nTau"></strong> µs sits between one carrier cycle and one audio cycle, as it should.</span></li>
       </ol>
       <a class="btn" href="log.html#m1">Readings and analysis →</a>
@@ -219,7 +219,7 @@
   </table>
 </footer>
 
-<script src="js/data.js?v=8"></script>
+<script src="js/data.js?v=9"></script>
 <script src="js/viewer3d.js?v=8"></script>
 <script src="js/landing.js?v=8"></script>
 </body>

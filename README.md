@@ -4,7 +4,7 @@ Build log for our AM radio, made for **ELEG103 Analog and Digital Electronics**,
 
 **Team 19:** Hamdy Ahmed · Mohamed Abdelrazek · David Amir
 
-The site is laid out as a blueprint drawing set, one sheet per milestone:
+The site opens on a cover sheet (`index.html`) and the build log (`log.html`) is laid out as a blueprint drawing set, one sheet per milestone:
 
 | Sheet | Milestone | Status |
 |---|---|---|
@@ -14,6 +14,11 @@ The site is laid out as a blueprint drawing set, one sheet per milestone:
 
 ## What's on the page
 
+**Cover sheet** (`index.html`): the project at a glance. A 3D model that rebuilds M1 on a loop, the signal chain with each stage tagged by milestone, a tuning dial comparing the predicted and measured bands, the drawing-set index and the key findings from M1.
+
+**Build log** (`log.html`):
+
+
 - **Interactive 3D assembly.** Our own WebGL model, drawn as a blueprint wireframe. Each build step adds its parts. **Replay** builds the whole radio step by step, and **Exploded** pulls the parts apart.
 - **Schematic with callouts A–E.** Clicking a letter on the schematic, on the 3D model or in the callout panel shows that part's role and what its reading tells us.
 - **Readings.** Predicted against measured values, with the percentage error worked out automatically.
@@ -22,7 +27,7 @@ The site is laid out as a blueprint drawing set, one sheet per milestone:
 
 ## Run it
 
-No install and no build step. Open `index.html` in a browser.
+No install and no build step. Open `index.html` in a browser for the cover sheet, or `log.html` for the build log.
 
 To serve it over HTTP instead (some browsers limit `file://` pages), use either:
 
@@ -38,16 +43,19 @@ then open the address it prints.
 
 1. Push this folder to the root of a GitHub repository.
 2. Go to **Settings → Pages → Deploy from a branch → main → / (root)**.
-3. Open the URL GitHub shows. Direct links such as `…/#m2` open a specific sheet.
+3. Open the URL GitHub shows. Direct links such as `…/log.html#m2` open a specific sheet (old `…/#m2` links are forwarded there).
 
 ## Files
 
 ```text
-index.html            page structure (M1, M2, M3 sheets)
+index.html            cover sheet (landing page)
+log.html              build log structure (M1, M2, M3 sheets)
 css/blueprint.css     blueprint look and the split-screen layout
+css/landing.css       cover-sheet layout, on top of blueprint.css
 js/data.js            ALL content: team, readings, steps, callouts, photos, M2 checklist
 js/viewer3d.js        3D assembly model (procedural geometry, plain WebGL)
 js/app.js             connects schematic, 3D, steps, calculator, charts and gallery
+js/landing.js         cover sheet: stats, looping 3D build, tuning dial, scroll reveals
 assets/photos/        bench and oscilloscope photos, LAB3 figure
 assets/docs/          LAB2, LAB3 and the variable-capacitor pinout
 ```

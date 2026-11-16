@@ -374,7 +374,8 @@
       if (drag && !drag.moved) pick(e);
       drag = null;
     });
-    canvas.addEventListener('wheel', (e) => {
+    /* opts.wheel = false leaves the wheel to the page (used on the scrolling cover sheet) */
+    if (opts.wheel !== false) canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       st.dist = Math.max(80, Math.min(1200, st.dist * (1 + Math.sign(e.deltaY) * 0.1)));
       request();
@@ -443,6 +444,8 @@
         const f = FRAMES[Math.min(st.step, FRAMES.length - 1)];
         animateTo(f[0], f[1]);
       },
+      /* Turn the camera about the target by dYaw radians (cover-sheet idle spin). */
+      orbit(dYaw) { st.yaw += dYaw; request(); },
       isVisible(key) { const pt = parts.find((p) => p.key === key); return !!pt && visible(pt); }
     };
 

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team 19 · MW-AM Receiver</title>
+<meta name="description" content="Team 19's medium-wave AM receiver for ELEG103, SBME, Fall 2026: a hand-wound tuner, an RF amplifier and an audio stage, documented as a blueprint drawing set with an interactive 3D assembly.">
+<meta name="author" content="Team 19: Hamdy Ahmed, Mohamed Abdelrazek, David Amir">
+<meta property="og:title" content="Team 19 · MW-AM Receiver">
+<meta property="og:description" content="A medium-wave AM radio built for ELEG103, documented as a blueprint drawing set with an interactive 3D assembly.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/photos/setup.jpg">
+<script>
+  /* old direct links (index.html#m2) now live on the build log */
+  if (/^#m[123]$/.test(location.hash)) location.replace('log.html' + location.hash);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Saira+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/blueprint.css?v=8">
+<link rel="stylesheet" href="css/landing.css?v=8">
+</head>
+<body class="cover">
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="Team 19, top of page">
+    <span class="brand-mark" aria-hidden="true">19</span>
+    <span class="kicker"><span data-bind="team"></span> · <span data-bind="course"></span></span>
+  </a>
+  <nav class="topnav" aria-label="Page">
+    <a href="#chain">Signal chain</a>
+    <a href="#dial">Dial</a>
+    <a href="#sheets">Drawing set</a>
+    <a href="#team">Title block</a>
+    <a class="btn btn-solid btn-sm" href="log.html#m1">Build log →</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO / COVER SHEET ============ -->
+  <section class="hero frame" id="top" aria-labelledby="heroTitle">
+    <span class="zone" aria-hidden="true">SHEET 0 · COVER</span>
+    <div class="hero-copy">
+      <p class="kicker y rise" style="--d:0">DRAWING SET · COVER SHEET · REV M1</p>
+      <h1 class="hero-title rise" id="heroTitle" style="--d:1">
+        <span>Medium-wave</span>
+        <span class="outline">AM receiver</span>
+      </h1>
+      <p class="lede rise" style="--d:2">A radio built one stage at a time for <strong>ELEG103 Analog and Digital Electronics</strong>. A hand-wound tuner, a two-transistor RF amplifier and an audio stage, each documented as a blueprint sheet with its schematic, readings and a 3D assembly you can turn.</p>
+      <div class="cta rise" style="--d:3">
+        <a class="btn btn-solid" href="log.html#m1">Open the build log <span aria-hidden="true">→</span></a>
+        <a class="btn" href="#sheets">See the drawing set</a>
+      </div>
+      <dl class="hero-stats rise" style="--d:4">
+        <div class="stat"><dt class="kicker">f₀ MEASURED</dt><dd class="stat-v" id="hF0"></dd><dd class="kicker">kHz</dd></div>
+        <div class="stat"><dt class="kicker">Q</dt><dd class="stat-v" id="hQ"></dd><dd class="kicker">f₀ / BW</dd></div>
+        <div class="stat"><dt class="kicker">COIL</dt><dd class="stat-v" id="hTurns"></dd><dd class="kicker" id="hWire"></dd></div>
+        <div class="stat"><dt class="kicker">DETECTOR τ</dt><dd class="stat-v" id="hTau"></dd><dd class="kicker unit">µs</dd></div>
+      </dl>
+    </div>
+
+    <figure class="hero-model rise" style="--d:2" aria-label="3D assembly of milestone 1">
+      <div class="model-head">
+        <p class="kicker y">STEP <span id="cStepNo">01</span> / <span id="cStepTotal">05</span></p>
+        <p class="kicker hint">DRAG TO TURN · TAP A LETTER</p>
+      </div>
+      <div class="v3d" id="coverV3d">
+        <canvas tabindex="0" aria-label="3D model of the tuner being assembled step by step. Drag or use arrow keys to turn it."></canvas>
+        <div class="v3d-labels"></div>
+        <div class="replay-progress" id="cBar" aria-hidden="true"></div>
+        <img class="v3d-fallback" src="assets/photos/setup.jpg" alt="Copper coil on a white PVC pipe between two breadboards, with the tuning capacitor and oscilloscope probes." hidden>
+        <span class="crosshair" aria-hidden="true"></span>
+      </div>
+      <figcaption class="model-cap" aria-live="polite">
+        <span class="cond" id="cStepTitle"></span>
+        <span class="mono muted xsmall" id="cPart"></span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ SIGNAL CHAIN ============ -->
+  <section class="block" id="chain" aria-labelledby="chainTitle">
+    <div class="block-title">
+      <p class="kicker y">01 · BLOCK DIAGRAM</p>
+      <h2 class="cond" id="chainTitle">From the air to your ear</h2>
+      <p class="small muted">Each milestone adds one stage of the receiver. Test points TP1–TP3 are where we put the probes.</p>
+    </div>
+    <ol class="chain">
+      <li class="stage ms-done">
+        <p class="stage-no mono">A</p>
+        <h3 class="cond">Test loop</h3>
+        <p class="xsmall">Five turns on the same pipe, driven by the function generator. It stands in for a broadcast station.</p>
+        <p class="tag">M1 · SIGNED OFF</p>
+      </li>
+      <li class="stage ms-done">
+        <p class="stage-no mono">B + C</p>
+        <h3 class="cond">Tuned tank</h3>
+        <p class="xsmall">75-turn coil across a 20–280 pF air-variable. Turning the shaft moves the resonant peak along the band.</p>
+        <p class="tag">M1 · SIGNED OFF</p>
+        <span class="tp" aria-label="Test point 1">TP1</span>
+      </li>
+      <li class="stage ms-plan">
+        <p class="stage-no mono">Q1 · Q2</p>
+        <h3 class="cond">RF amplifier</h3>
+        <p class="xsmall">Two 2N3904 common-emitter stages fed by a six-turn link over the tank coil.</p>
+        <p class="tag">M2 · PLANNED</p>
+        <span class="tp" aria-label="Test point 2">TP2</span>
+      </li>
+      <li class="stage ms-done">
+        <p class="stage-no mono">D + E</p>
+        <h3 class="cond">Envelope detector</h3>
+        <p class="xsmall">Diode into 15 kΩ ∥ 3.3 nF. Built with a 1N60P in M1, rebuilt with a 1N4148 after the amplifier in M2.</p>
+        <p class="tag">M1 → M2</p>
+        <span class="tp" aria-label="Test point 3">TP3</span>
+      </li>
+      <li class="stage ms-todo">
+        <p class="stage-no mono">—</p>
+        <h3 class="cond">Audio stage</h3>
+        <p class="xsmall">Drawn once M2 is signed off and the next lab brief is out.</p>
+        <p class="tag">M3 · NOT STARTED</p>
+      </li>
+    </ol>
+    <ul class="legend mono" aria-label="Legend">
+      <li><span class="sw sw-done"></span>Built and measured</li>
+      <li><span class="sw sw-plan"></span>Planned</li>
+      <li><span class="sw sw-todo"></span>Reserved</li>
+    </ul>
+  </section>
+
+  <!-- ============ TUNING DIAL ============ -->
+  <section class="block" id="dial" aria-labelledby="dialTitle">
+    <div class="block-title">
+      <p class="kicker y">02 · TUNING DIAL</p>
+      <h2 class="cond" id="dialTitle">Where our tank actually tunes</h2>
+      <p class="small muted">Drag the needle. The dashed outline is the band we predicted from L and C; the yellow window is what the bench showed.</p>
+    </div>
+    <div class="dial frame">
+      <span class="zone" aria-hidden="true">MW · 520–1620 kHz</span>
+      <div class="dial-face">
+        <svg id="dialSvg" viewBox="0 0 1000 150" aria-hidden="true"></svg>
+        <input type="range" id="dialInput" min="520" max="1620" step="1" value="520" aria-label="Tuning frequency in kilohertz">
+      </div>
+      <div class="dial-read">
+        <p class="readout-big mono"><span id="dialF">520</span><small> kHz</small></p>
+        <p class="mono small" id="dialC"></p>
+        <p class="dial-note" id="dialNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DRAWING SET ============ -->
+  <section class="block" id="sheets" aria-labelledby="sheetsTitle">
+    <div class="block-title">
+      <p class="kicker y">03 · DRAWING SET</p>
+      <h2 class="cond" id="sheetsTitle">Three sheets, one radio</h2>
+      <p class="small muted">The build log is laid out as a drawing set, one sheet per milestone.</p>
+    </div>
+    <div class="sheet-grid">
+      <a class="sheet-card is-done" href="log.html#m1">
+        <div class="sheet-top"><span class="sheet-no cond">1</span><span class="badge">SIGNED OFF</span></div>
+        <h3 class="cond">Tuner &amp; envelope detector</h3>
+        <p class="xsmall">Hand-wound coil, tuning capacitor and diode detector, with predicted against measured readings.</p>
+        <ul class="sheet-list mono">
+          <li><b>01</b> Build in 3D</li><li><b>02</b> Schematic A–E</li><li><b>03</b> Readings</li>
+          <li><b>04</b> Analysis</li><li><b>05</b> Issue log</li><li><b>06</b> Photos</li>
+        </ul>
+        <span class="sheet-go mono">OPEN SHEET 1 →</span>
+      </a>
+      <a class="sheet-card is-plan" href="log.html#m2">
+        <div class="sheet-top"><span class="sheet-no cond">2</span><span class="badge">PLANNED</span></div>
+        <h3 class="cond">Two-stage RF amplifier</h3>
+        <p class="xsmall">Two 2N3904 stages, a new 1N4148 detector and a six-turn link onto M1's tank.</p>
+        <div class="sheet-progress" aria-hidden="true"><div id="m2Bar"></div></div>
+        <p class="mono xsmall muted"><span id="m2Total"></span>-step assembly checklist · 4 measurement tables</p>
+        <span class="sheet-go mono">OPEN SHEET 2 →</span>
+      </a>
+      <a class="sheet-card is-todo" href="log.html#m3">
+        <div class="sheet-top"><span class="sheet-no cond">3</span><span class="badge">RESERVED</span></div>
+        <h3 class="cond">Audio stage</h3>
+        <p class="xsmall">Reserved. It gets the same treatment as M1: 3D steps, a lettered schematic, readings and analysis.</p>
+        <span class="sheet-go mono">OPEN SHEET 3 →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ BENCH ============ -->
+  <section class="block bench" aria-labelledby="benchTitle">
+    <figure class="bench-photo frame">
+      <span class="zone" aria-hidden="true">FIG. 1</span>
+      <img src="assets/photos/setup.jpg" alt="Copper coil on a white PVC pipe between two breadboards, with the tuning capacitor and oscilloscope probes." loading="lazy">
+      <figcaption class="mono muted xsmall">Full bench, coil at centre.</figcaption>
+    </figure>
+    <div class="bench-notes">
+      <p class="kicker y">04 · ON THE BENCH</p>
+      <h2 class="cond" id="benchTitle">What sheet 1 found</h2>
+      <ol class="notes">
+        <li><b class="mono">N1</b><span>The tank resonates at <strong id="nF0"></strong> kHz at half travel, with a 0.7 × peak bandwidth of <strong id="nBW"></strong> kHz.</span></li>
+        <li><b class="mono">N2</b><span>The dial only covers <strong id="nBand"></strong> kHz, a <strong id="nRatio"></strong> : 1 capacitance swing instead of 14 : 1. That is the first thing to check before M2.</span></li>
+        <li><b class="mono">N3</b><span>The detector passes 63–67 % of the peak above 0.2 V and only 26 % at 44.5 mV, where the diode drop takes most of it.</span></li>
+        <li><b class="mono">N4</b><span>τ = <strong id="nTau"></strong> µs sits between one carrier cycle and one audio cycle, as it should.</span></li>
+      </ol>
+      <a class="btn" href="log.html#m1">Readings and analysis →</a>
+    </div>
+  </section>
+</main>
+
+<!-- ============ TITLE BLOCK ============ -->
+<footer class="block" id="team">
+  <table class="title-block">
+    <tbody>
+      <tr><td class="k">PROJECT</td><td colspan="3">MEDIUM-WAVE AM RECEIVER</td></tr>
+      <tr><td class="k">TEAM</td><td colspan="3" id="tbTeam"></td></tr>
+      <tr><td class="k">COURSE</td><td colspan="3" data-bind="course"></td></tr>
+      <tr><td class="k">SOURCES</td><td colspan="3"><a href="assets/docs/LAB2.pdf">LAB2</a> · <a href="assets/docs/LAB3.pdf">LAB3</a> · <a href="assets/docs/variable-cap.pdf">CAP PINOUT</a></td></tr>
+      <tr><td class="k">SHEET</td><td class="y">0 / 3 · COVER</td><td class="k">REV</td><td>M1</td></tr>
+    </tbody>
+  </table>
+</footer>
+
+<script src="js/data.js?v=8"></script>
+<script src="js/viewer3d.js?v=8"></script>
+<script src="js/landing.js?v=8"></script>
+</body>
+</html>

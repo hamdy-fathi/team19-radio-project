@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team 19 · MW-AM Receiver</title>
+<meta name="description" content="Team 19's build log for a medium-wave AM receiver: schematic, 3D assembly sequence, measurements and analysis. ELEG103, SBME, Fall 2026.">
+<meta name="author" content="Team 19: Hamdy Ahmed, Mohamed Abdelrazek, David Amir">
+<meta property="og:title" content="Team 19 · MW-AM Receiver">
+<meta property="og:description" content="A medium-wave AM radio built for ELEG103, documented as a blueprint drawing set with an interactive 3D assembly.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Saira+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/blueprint.css?v=7">
+</head>
+<body data-layout="split" data-section="build" data-ms="m1">
+<a class="skip" href="#mod-viewer">Skip to the 3D model</a>
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header class="mod" id="mod-head">
+    <div class="head-id">
+      <p class="kicker"><span data-bind="team"></span> · <span data-bind="course"></span></p>
+      <h1 id="msTitle">Tuner &amp; envelope detector</h1>
+      <p class="kicker y" id="msStatus">SHEET 1 OF 3 · REV M1 · SIGNED OFF</p>
+    </div>
+    <div class="head-ctl">
+      <nav class="ms-tabs" aria-label="Milestones">
+        <a class="ms-tab" href="#m1" data-ms="m1">M1 TUNER</a>
+        <a class="ms-tab" href="#m2" data-ms="m2">M2 RF AMP</a>
+        <a class="ms-tab" href="#m3" data-ms="m3">M3 AUDIO</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ SECTION NAV ============ -->
+  <nav class="mod m1only" id="mod-nav" aria-label="Sections">
+    <p class="kicker nav-title">SECTIONS</p>
+    <button type="button" class="nav-btn" data-sec="build"><span>01</span> Build in 3D</button>
+    <button type="button" class="nav-btn" data-sec="schematic"><span>02</span> Schematic</button>
+    <button type="button" class="nav-btn" data-sec="readings"><span>03</span> Readings</button>
+    <button type="button" class="nav-btn" data-sec="analysis"><span>04</span> Analysis</button>
+    <button type="button" class="nav-btn" data-sec="issues"><span>05</span> Issue log</button>
+    <button type="button" class="nav-btn" data-sec="photos"><span>06</span> Photos</button>
+    <div class="nav-status">
+      <p class="kicker">STATUS</p>
+      <p class="mono y strong">M1 SIGNED OFF</p>
+    </div>
+  </nav>
+
+  <!-- ============ 3D VIEWER ============ -->
+  <section class="mod m1only" id="mod-viewer" data-zone="A1–B2 · ASSEMBLY 3D" aria-label="3D assembly">
+    <div class="viewer-head">
+      <div>
+        <p class="kicker y">STEP <span id="vStepNo">01</span> / <span id="vStepTotal">06</span></p>
+        <h2 class="cond" id="vStepTitle"></h2>
+      </div>
+      <p class="kicker hint">DRAG · SCROLL · CLICK A TAG</p>
+    </div>
+    <div class="v3d" id="v3d">
+      <canvas tabindex="0" aria-label="3D assembly model. Arrow keys rotate, plus and minus zoom, Home resets."></canvas>
+      <div class="v3d-labels"></div>
+      <div class="replay-progress" id="replayBar" aria-hidden="true"></div>
+      <div class="v3d-tools">
+        <label class="tool check"><input type="checkbox" id="explode"> Exploded</label>
+        <button type="button" class="tool" id="resetView">Reset</button>
+      </div>
+      <img class="v3d-fallback" src="assets/photos/setup.jpg" alt="Bench photo shown because 3D is unavailable in this browser." hidden>
+    </div>
+    <div class="step-bar">
+      <button type="button" class="tool play" id="replay" aria-pressed="false">▶ Replay</button>
+      <button type="button" class="tool" id="prevStep" aria-label="Previous step">←</button>
+      <ol class="step-strip" id="stepList"></ol>
+      <button type="button" class="tool" id="nextStep" aria-label="Next step">→</button>
+    </div>
+  </section>
+
+  <!-- ============ CALLOUT ============ -->
+  <section class="mod m1only" id="mod-callout" data-zone="D1 · CALLOUT" aria-live="polite">
+    <div class="chips" id="partBtns"></div>
+    <p class="kicker y">CALLOUT <span id="pKey"></span></p>
+    <h2 class="cond" id="pName"></h2>
+    <p class="mono muted small" id="pSpec"></p>
+    <p class="small" id="pRole"></p>
+    <div class="dash-top">
+      <p class="kicker y">WHAT THE READING SAYS</p>
+      <p class="small" id="pReading"></p>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="mod m1only" id="mod-stats" data-zone="D2 · KEY READINGS" aria-label="Key readings">
+    <div class="stat"><p class="kicker">f₀</p><p class="stat-v" id="statF0"></p><p class="kicker">kHz</p></div>
+    <div class="stat"><p class="kicker">Q</p><p class="stat-v" id="statQ"></p><p class="kicker">f₀ / BW</p></div>
+    <div class="stat"><p class="kicker">BAND</p><p class="stat-v" id="statBand"></p><p class="kicker">kHz</p></div>
+  </section>
+
+  <!-- ============ STEP DETAIL ============ -->
+  <section class="mod m1only" id="mod-step" data-zone="A3–B3 · STEP NOTES" aria-live="polite">
+    <div class="step-text">
+      <p class="kicker y">STEP <span id="sNum"></span> NOTES</p>
+      <h3 class="cond" id="sTitle"></h3>
+      <p class="small" id="sText"></p>
+      <p class="note" id="sNote"></p>
+      <pre class="code" id="sCode" hidden></pre>
+    </div>
+    <figure class="step-photo">
+      <img id="sImg" src="" alt="">
+      <figcaption class="mono muted" id="sCap"></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ SCHEMATIC ============ -->
+  <section class="mod m1only sec" id="mod-schem" data-sec-panel="schematic" data-zone="C1 · SCHEMATIC" aria-label="Schematic">
+    <svg class="schem" viewBox="0 0 900 420" role="img" aria-label="Schematic: generator and five-turn loop coupled to a 75-turn coil, parallel 20 to 280 picofarad capacitor at TP1, 1N60P diode to TP3, 15 kilohm and 3.3 nanofarad to ground">
+      <circle class="w" cx="40" cy="215" r="22"/>
+      <path class="w" d="M28 215 q 6 -10 12 0 t 12 0"/>
+      <path class="w" d="M40 193 V 90 H 110 V 160 a10 10 0 0 1 0 20 a10 10 0 0 1 0 20 a10 10 0 0 1 0 20 a10 10 0 0 1 0 20 a10 10 0 0 1 0 20 V 340 H 40 V 237"/>
+      <path class="w" d="M200 90 V 150 a10 10 0 0 0 0 20 a10 10 0 0 0 0 20 a10 10 0 0 0 0 20 a10 10 0 0 0 0 20 a10 10 0 0 0 0 20 a10 10 0 0 0 0 20 V 340"/>
+      <path class="dim" d="M135 150 V 280 M165 150 V 280"/>
+      <path class="w" d="M200 90 H 440"/>
+      <path class="w" d="M300 90 V 207 M272 207 H 328 M272 223 H 328 M300 223 V 340"/>
+      <path class="w" d="M268 250 L 332 182 M332 182 L 318 184 M332 182 L 330 196"/>
+      <path class="wf" d="M440 76 L 440 104 L 474 90 Z"/>
+      <path class="w" d="M476 74 V 106 M476 90 H 820"/>
+      <path class="w" d="M620 90 V 160 l 14 8 l -28 16 l 28 16 l -28 16 l 28 16 l -28 16 l 14 8 V 340"/>
+      <path class="w" d="M720 90 V 207 M692 207 H 748 M692 223 H 748 M720 223 V 340"/>
+      <path class="w" d="M200 340 H 820 M200 340 V 368 M180 368 H 220 M188 378 H 212 M196 388 H 204"/>
+      <circle class="node" cx="360" cy="90" r="5"/><circle class="node" cx="560" cy="90" r="5"/>
+      <circle class="w" cx="828" cy="90" r="7"/><circle class="w" cx="828" cy="340" r="7"/>
+      <text class="lbl y" x="342" y="72">TP1</text><text class="lbl y" x="542" y="72">TP3</text>
+      <text class="lbl" x="78" y="300">5 T</text><text class="lbl" x="214" y="300">75 T</text>
+      <text class="lbl" x="138" y="140">M</text><text class="lbl" x="338" y="250">20–280 pF</text>
+      <text class="lbl" x="420" y="130">1N60P</text><text class="lbl" x="642" y="216">15 kΩ</text>
+      <text class="lbl" x="756" y="216">3.3 nF</text><text class="lbl" x="8" y="270">GEN</text>
+      <g id="balloons"></g>
+    </svg>
+  </section>
+
+  <!-- ============ READINGS ============ -->
+  <section class="mod m1only sec" id="mod-readings" data-sec-panel="readings" data-zone="C2–C3 · READINGS" aria-label="Measurement schedule">
+    <p class="kicker y">MEASUREMENT SCHEDULE</p>
+    <p class="mono muted xsmall">Predicted = Table 4 as submitted · Measured = Tables 5–6 · Error = 100 × (P − M) / M</p>
+    <div class="scroll">
+      <table class="grid-table">
+        <thead><tr><th>REF</th><th>PARAMETER</th><th>PREDICTED</th><th>MEASURED</th><th>ERROR</th></tr></thead>
+        <tbody id="schedule"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ANALYSIS ============ -->
+  <section class="mod m1only sec" id="mod-analysis" data-sec-panel="analysis" data-zone="C2–C3 · ANALYSIS" aria-label="Analysis">
+    <div class="an-grid">
+      <div class="an-card">
+        <p class="kicker y">NOTE 1 · TUNING RANGE</p>
+        <label for="cap" class="small">Sweep C with the predicted L = <span data-bind="L"></span> µH</label>
+        <input id="cap" type="range" min="20" max="280" step="1" value="150">
+        <p class="mono muted small">C = <span id="capVal">150</span> pF → <strong class="readout" id="fVal"></strong> kHz</p>
+        <div class="scale" aria-hidden="true"><div class="ticks"></div><div class="band" id="band"></div><div class="needle" id="needle"></div></div>
+        <div class="scale-legend mono"><span>500</span><span>yellow = measured band</span><span>2400 kHz</span></div>
+        <p id="tuneNote" class="tune-note"></p>
+        <p class="xsmall">The tank saw a capacitance ratio of (1119 / 965.5)² ≈ <strong>1.34</strong>, not 280 / 20 = 14. Likely causes: partial shaft travel, the wrong section, or a large parallel capacitance. <span class="y">Measure C at both stops.</span></p>
+      </div>
+      <div class="an-card">
+        <p class="kicker y">NOTE 3 · DETECTOR TRANSFER</p>
+        <svg class="fig" id="detChart" viewBox="0 0 520 300" role="img" aria-label="TP3 DC against TP1 peak for six measurements"></svg>
+        <div class="det-rows" id="detRows"></div>
+        <p class="note" id="detNote"></p>
+      </div>
+      <div class="an-card">
+        <p class="kicker y">NOTE 2 · SELECTIVITY</p>
+        <svg class="fig" viewBox="0 0 460 220" role="img" aria-label="Resonance curve peaking at 1065 kilohertz with 0.7 of peak points at 956.3 and 1194 kilohertz">
+          <path class="w" d="M30 190 H 440"/>
+          <path class="w" d="M30 186 C 110 180, 150 150, 190 90 S 225 30, 240 30 S 280 60, 300 100 S 380 178, 440 184"/>
+          <path class="dim" d="M178 76 H 318 M240 30 V 190 M178 76 V 190 M318 76 V 190"/>
+          <text class="lbl w0" x="206" y="210">1065</text><text class="lbl" x="150" y="210">956.3</text>
+          <text class="lbl" x="300" y="210">1194</text><text class="lbl y" x="194" y="68">BW 237.7</text>
+        </svg>
+        <p class="xsmall">Q = 1065 / 237.7 ≈ <strong>4.48</strong>. With 9 kHz channel spacing the passband spans about <strong>26 channels</strong>. The 15 kΩ load and the probe damp the tank; M2's six-turn link should sharpen it.</p>
+      </div>
+      <div class="an-card">
+        <p class="kicker y">NOTE 4 · TIME CONSTANT (LOG)</p>
+        <div class="logbar">
+          <div class="mark" style="left:8%">1 µs<br>carrier</div>
+          <div class="mark main" style="left:58%">49.5 µs<br>our RC</div>
+          <div class="mark" style="left:80%">200 µs<br>audio</div>
+        </div>
+        <p class="xsmall">RC is about 50× one 1 MHz carrier cycle, so ripple stays small, and about 4× shorter than one 5 kHz audio cycle, so the output still follows the voice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ISSUES ============ -->
+  <section class="mod m1only sec" id="mod-issues" data-sec-panel="issues" data-zone="C2–C3 · ISSUE LOG" aria-label="Issue log">
+    <p class="kicker y">ISSUE LOG</p>
+    <div class="scroll">
+      <table class="grid-table">
+        <thead><tr><th>#</th><th>ISSUE</th><th>CAUSE</th><th>RESOLUTION</th></tr></thead>
+        <tbody id="issues"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PHOTOS ============ -->
+  <section class="mod m1only sec" id="mod-photos" data-sec-panel="photos" data-zone="C2–C3 · PHOTOGRAPHS" aria-label="Reference photographs">
+    <figure class="gal-main">
+      <img id="galImg" src="" alt="">
+      <figcaption class="mono muted" id="galCap"></figcaption>
+    </figure>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+
+  <!-- ============ TITLE BLOCK ============ -->
+  <footer class="mod m1only" id="mod-title">
+    <table>
+      <tbody>
+        <tr><td class="k">PROJECT</td><td colspan="3">MEDIUM-WAVE AM RECEIVER</td></tr>
+        <tr><td class="k">TEAM</td><td colspan="3" data-bind="team"></td></tr>
+        <tr><td class="k">SOURCES</td><td colspan="3"><a href="assets/docs/LAB2.pdf">LAB2</a> · <a href="assets/docs/LAB3.pdf">LAB3</a> · <a href="assets/docs/variable-cap.pdf">CAP PINOUT</a></td></tr>
+        <tr><td class="k">SHEET</td><td class="y">1 / 3</td><td class="k">REV</td><td>M1</td></tr>
+      </tbody>
+    </table>
+  </footer>
+
+  <!-- ============ M2 ============ -->
+  <section class="mod ms-sheet" id="mod-m2" aria-label="Milestone 2">
+    <aside class="ms-preview" data-zone="REFERENCE">
+      <div class="viewer-head">
+        <div>
+          <p class="kicker y">SHEET 2 · REFERENCE DRAWING</p>
+          <h2 class="cond">Board 1′ on M1's tank</h2>
+        </div>
+        <p class="kicker hint">PLANNED · NOT BUILT</p>
+      </div>
+      <figure class="crop-fig">
+        <div class="crop"><img src="assets/photos/lab3-circuit.png" alt="LAB3 Part B Figure 3: two 2N3904 common-emitter stages with supply protection, fed from a six-turn link on M1's tank, followed by a 1N4148 envelope detector."></div>
+        <figcaption class="mono muted">LAB3 Part B, Figure 3 · TP1 tank, TP2 Q2 collector, TP3 detector / LEVEL</figcaption>
+      </figure>
+      <div class="spec-grid">
+        <div class="stat"><p class="kicker">GAIN</p><p class="stat-v">2 × 2N3904</p><p class="kicker">CE, 100 kΩ bias</p></div>
+        <div class="stat"><p class="kicker">DETECTOR</p><p class="stat-v">1N4148</p><p class="kicker">15 kΩ ∥ 3.3 nF</p></div>
+        <div class="stat"><p class="kicker">COUPLING</p><p class="stat-v">6-turn link</p><p class="kicker">over M1's coil</p></div>
+        <div class="stat"><p class="kicker">SUPPLY</p><p class="stat-v">4.5 V</p><p class="kicker">3 × AA via 1N5819</p></div>
+      </div>
+    </aside>
+    <div class="ms-body">
+      <p class="ms-lede">Amplify the tuned RF with two common-emitter stages, then recover the envelope with a new 1N4148 detector. M1's tank stays; its old detector comes off.</p>
+      <div class="panel-block">
+        <div class="block-head">
+          <p class="kicker y">ASSEMBLY SEQUENCE</p>
+          <p class="kicker"><span id="doneCount">0</span> / <span id="doneTotal"></span> DONE</p>
+        </div>
+        <div class="progress"><div id="doneBar"></div></div>
+        <div id="checklist" class="checklist"></div>
+      </div>
+      <div class="panel-block">
+        <p class="kicker y">MEASUREMENTS TO RECORD</p>
+        <div class="cards2">
+          <div class="dash-card"><b>T4</b> DC operating points of Q1 and Q2 (β = 100, V<sub>BE</sub> = 0.7 V, 3.9 V rail)</div>
+          <div class="dash-card"><b>T5</b> RF gain at 531 kHz, 1 MHz and 1.6 MHz, against Qucs-S</div>
+          <div class="dash-card"><b>T6</b> Detector rise above baseline at 1 MHz, sources 0.05–1 V</div>
+          <div class="dash-card"><b>T7</b> Coupled-loop distance for a 10 mV rise at TP3</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ M3 ============ -->
+  <section class="mod ms-sheet" id="mod-m3" aria-label="Milestone 3">
+    <aside class="ms-preview">
+      <div class="viewer-head">
+        <div>
+          <p class="kicker y">SHEET 3 · RESERVED</p>
+          <h2 class="cond">Drawing area</h2>
+        </div>
+        <p class="kicker hint">NOT STARTED</p>
+      </div>
+      <div class="reserved">
+        <p class="cond">Reserved</p>
+        <p class="kicker">THE AUDIO-STAGE 3D MODEL GOES HERE</p>
+      </div>
+    </aside>
+    <div class="ms-body">
+      <div class="panel-block">
+        <p class="kicker y">STATUS</p>
+        <p class="small">Not started. This sheet is drawn once M2 is signed off and the next lab brief is released.</p>
+      </div>
+      <div class="panel-block">
+        <p class="kicker y">THIS SHEET WILL HOLD</p>
+        <div class="cards2">
+          <div class="dash-card"><b>01</b> Build steps with a 3D model for each, like M1</div>
+          <div class="dash-card"><b>02</b> Schematic with lettered callouts</div>
+          <div class="dash-card"><b>03</b> Predicted vs measured readings</div>
+          <div class="dash-card"><b>04</b> Analysis and issue log</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="js/data.js?v=7"></script>
+<script src="js/viewer3d.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
+</body>
+</html>
